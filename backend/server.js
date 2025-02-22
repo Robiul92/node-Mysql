@@ -12,8 +12,8 @@ app.use(express.json());
 
 // API endpoint to list orders with filtering and pagination
 app.get("/orders", async (req, res) => {
-  const { customerEmail, categoryName, productName, startDate, endDate } = req.query;
-
+  const { customerEmail, categoryName, productName, startDate, endDate, page = 1, limit = 10 } = req.query;
+  const offset = (page - 1) * limit;
   let query = `
     SELECT 
       o.id, 
@@ -35,6 +35,8 @@ app.get("/orders", async (req, res) => {
   if (productName) query += ` AND p.name = '${productName}'`;
   if (startDate) query += ` AND o.order_date >= '${startDate}'`;
   if (endDate) query += ` AND o.order_date <= '${endDate}'`;
+
+  query += ` LIMIT ${limit} OFFSET ${offset}`;
 
   try {
     const [orders] = await db.query(query);

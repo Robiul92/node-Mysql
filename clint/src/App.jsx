@@ -20,6 +20,7 @@ function App() {
 
   const fetchOrders = async () => {
     setLoading(true); // Start loading
+    setOrders([]);
     try {
       const { data } = await axios.get("http://localhost:3000/orders", {
         params: filters,
